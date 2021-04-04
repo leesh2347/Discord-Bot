@@ -28,3 +28,4 @@ exports.run = (client, msg, args) => {
     };
 
 exports.name='녜힁';
+//녜힁생성기(메이플 잡닉 제조기)
