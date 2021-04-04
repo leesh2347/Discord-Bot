@@ -36,3 +36,9 @@ cmd.run(client, msg, args);
 })
 
 client.login('I removed here because its my token');
+
+/*출처: https://namu.wiki/w/discord.js#s-3.2 나무위키 2번 예제 기반으로
+원래의 소스는 메시지의 앞부분만 명령어로 감지했으나, 카톡봇 구동 원리와 비슷하게 메시지가 올 때마다 전체 소스들이 돌아가며
+명령어 감지는 소스에서 자체적으로 감지하도록 수정
+(이렇게 하면 명령어가 중간이나 뒤에 있어도 감지가 가능하며, 하나의 기능에 넣을 수 있는 명령어 다양화 가능)
+*/
