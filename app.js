@@ -20,24 +20,19 @@ client.commands.load(__dirname + "/commands");
 //해당 파일이 위치한 디렉터리에서 "/commands" 경로를 추가
 
 ar=new Array(client.commands.map(c => c.name));
-//console.log(ar[0].join('ㅡ'));
 client.on('ready', () => console.log(`${client.user.tag} 에 로그인됨`));
 
 client.on('message', msg => {
     if (msg.author.bot) return;
-    //if (!msg.content.startsWith(prefix)) return;
-    //if (msg.content.slice(0, prefix.length) !== prefix) return;
-
     const args = msg.content.slice(prefix.length).trim().split(' ');
 
 for(i=0;i<ar[0].length;i++)
     {
 const command = ar[0][i];
-//console.log(command);
     let cmd = client.commands.get(command);
     //get는 컬렉션 내에 해당 key 값을 가진 데이터가 없으면 falsy 값을 반환하므로 부분적으로 Collection#has처럼 사용할수 있습니다.
 cmd.run(client, msg, args);
 }
 })
 
-client.login('ODI2NDAxNDIwNDU3OTM0ODY4.YGL8TA.fjLZV-0gf3FK3ETg9hFQhaPK-xI');
+client.login('I removed here because its my token');
