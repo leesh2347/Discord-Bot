@@ -17,7 +17,8 @@ num=new Array(0,0,0);
 play=new Array(0,0,0);
 strike=0;
 ball=0;
-//proom=room;
+pguild=msg.guild.name;
+pchannel=msg.channel.name;
 msg.channel.send("새로운 게임이 생성되었습니다!");
 num[0]=Math.floor(Math.random()*9)+1;
 do{
@@ -45,9 +46,9 @@ else if(pguild!=msg.guild.name||pchannel!=msg.channel.name)
 msg.channel.send("다른 방 또는 채널에서 누군가가 게임을 진행 중입니다.");
 }
 else{
-play[0]=args[0];
-play[1]=args[1];
-play[2]=args[2];
+play[0]=args[1];
+play[1]=args[2];
+play[2]=args[3];
 if(play[0]<1||play[0]>9||play[1]<1||play[1]>9||play[2]<1||play[2]>9)
 msg.channel.send("1~9 사이의 숫자를 입력해 주세요.");
 else
