@@ -3,7 +3,7 @@ const foods=["햄버거","피자","삼겹살","닭갈비","돈까스","초밥","
 var sangchuHP = {};
 var sangchuMob = {};
 const fs = require('fs');
-var dirn="/data/data/com.termux/files/home/discord-bot";
+var dirn="/home/ubuntu/files";
 
 function read(target, res){
    return JSON.parse(fs.readFileSync(dirn+"/SangChu/Data/"+target+".json"))[res];
