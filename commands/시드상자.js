@@ -25,7 +25,11 @@ exports.run = (client, msg, args) => {
                res=itemname[j]+" ("+lev+"레벨)";
             }
             else res=itemname[j];
-            msg.channel.send("["+msg.author.username+"] 님의 1급 상자 결과....\n\nㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n"+res+"\nㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+			const embed1 = new Discord.MessageEmbed()
+				.setTitle("["+msg.author.username+"] 님의 1급 상자 결과....")
+				.setDescription(res);
+			
+            msg.channel.send({ embeds: [embed1] });
             return;
          }
          else{
