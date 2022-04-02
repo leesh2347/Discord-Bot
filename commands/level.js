@@ -1,27 +1,17 @@
 const Discord = require('discord.js');
 var cheerio = require('cheerio');
-var request = require('request');
+const {fetch} = require('undici');
 
-function getexp(index){
-	request("http://wachan.me/exp_api.php?exp1="+index, function(error, response, html){
-		if (error) {throw error};
-		var textt="";
-		var $ = cheerio.load(html);
-		var l=$(this).text();
+async function getexp(index,msg){
+		var l=await(await fetch("http://wachan.me/exp_api.php?exp1="+index)).text();
 		var e = JSON.parse(l).result;
 		return Number(parseInt(e.replace(/,/g,"")));
-	});
 }
 
-function sum_cnt(index1,index2) {
-	request("http://wachan.me/exp_api.php?exp1="+index1+"&exp2="+index2, function(error, response, html){
-		if (error) {throw error};
-		var textt="";
-		var $ = cheerio.load(html);
-		var l=$(this).text();
+async function sum_cnt(index1,index2,msg) {
+		var l=await(await fetch("http://wachan.me/exp_api.php?exp1="+index1+"&exp2="+index2)).text();
 		var e = JSON.parse(l).result;
 		return Number(parseInt(e.replace(/,/g,"")));
-	});
 }
 
 function unitExp(remaintonext){
@@ -60,53 +50,54 @@ function unitExp(remaintonext){
 	}
 	// if(jo == 0){
 	   // }else if()
-	return unit 
+	return unit ;
 }
 
 //run이라는 메소드(function)을 export(수출)
-exports.run = (client, msg, args) => {
+exports.run = async (client, msg, args) => {
 		if(msg.content.split(" ")[0]=="@레벨")
 		{
 			var nick=msg.content.split("@레벨 ")[1];
 			var url = "https://maplestory.nexon.com/Ranking/World/Total?c="+encodeURIComponent(nick);
-				request(url, function(error, response, html){
-					try{
-						var textt="";
-						var $ = cheerio.load(html);
-						var data=$("#container > div > div > div:nth-child(4) > div.rank_table_wrap > table > tbody > tr.search_com_chk > td:nth-child(4)").text();
-						var level=$("#container > div > div > div:nth-child(4) > div.rank_table_wrap > table > tbody > tr.search_com_chk > td:nth-child(3)").text().replace("Lv.", "");
-						if(level>299){
-							const embed1 = new Discord.MessageEmbed()
-								.setTitle("["+nick+"]")
-								.setDescription("\nLv."+level);
-							msg.channel.send({ embeds: [embed1] });
-						}
-						else{
-							var exp=data.replace(/,/g, "");     
-							var per=(exp/getexp(level)*100).toFixed(3);
-							var remaintonext=getexp(level)-exp;
-							var remaintomax=sum_cnt(level,300)-exp;       
-							 if((Math.ceil(remaintomax/10000000000000000)-1)>0){
-								 const embed1 = new Discord.MessageEmbed()
-									.setTitle("["+nick+"]")
-									.setDescription("Lv."+level+"("+per+"%)\n다음 레벨까지 경험치\n"+unitExp(remaintonext)+"\n만렙까지 : "+(Math.ceil(remaintomax/10000000000000000)-1)+"경 "+Number((Math.ceil(remaintomax/1000000000000)-(Math.ceil(remaintomax/10000000000000000)-1)*10000)-1)+"조 "+(Math.ceil(remaintomax/100000000)-(Math.ceil((remaintomax/1000000000000)-1)*10000)-1)+"억");
-								msg.channel.send({ embeds: [embed1] });
-								 
-							}else{
-								const embed1 = new Discord.MessageEmbed()
-									.setTitle("["+nick+"]")
-									.setDescription("Lv."+level+"("+per+"%)\n다음 레벨까지 경험치\n"+unitExp(remaintonext)+"\n만렙까지 : "+Number((Math.ceil(remaintomax/1000000000000)-(Math.ceil(remaintomax/10000000000000000)-1)*10000)-1)+"조 "+(Math.ceil(remaintomax/100000000)-(Math.ceil((remaintomax/1000000000000)-1)*10000)-1)+"억");
-								msg.channel.send({ embeds: [embed1] });
-							}
-						}
-					}catch(error)
-					{
+			try{
+				var l=await(await fetch(url)).text();
+				var textt="";
+				var $ = cheerio.load(l);
+				var data=$("#container > div > div > div:nth-child(4) > div.rank_table_wrap > table > tbody > tr.search_com_chk > td:nth-child(4)").text();
+				var level=$("#container > div > div > div:nth-child(4) > div.rank_table_wrap > table > tbody > tr.search_com_chk > td:nth-child(3)").text().replace("Lv.", "");
+				if(level>299){
+					const embed1 = new Discord.MessageEmbed()
+						.setTitle("["+nick+"]")
+						.setDescription("\nLv."+level);
+					msg.channel.send({ embeds: [embed1] });
+				}
+				else{
+					var exp=data.replace(/,/g, "");
+					var pe=await getexp(level);
+					var per=(exp/pe*100).toFixed(3);
+					var remaintonext=pe-exp;
+					var sm=await sum_cnt(level,300);
+					var remaintomax=sm-exp;       
+					if((Math.ceil(remaintomax/10000000000000000)-1)>0){
 						const embed1 = new Discord.MessageEmbed()
 							.setTitle("["+nick+"]")
-							.setDescription("없는 캐릭터명 입니다.");
+							.setDescription("Lv."+level+"("+per+"%)\n다음 레벨까지 경험치\n"+unitExp(remaintonext)+"\n만렙까지 : "+(Math.ceil(remaintomax/10000000000000000)-1)+"경 "+Number((Math.ceil(remaintomax/1000000000000)-(Math.ceil(remaintomax/10000000000000000)-1)*10000)-1)+"조 "+(Math.ceil(remaintomax/100000000)-(Math.ceil((remaintomax/1000000000000)-1)*10000)-1)+"억");
+						msg.channel.send({ embeds: [embed1] });	 
+					}else{
+						const embed1 = new Discord.MessageEmbed()
+							.setTitle("["+nick+"]")
+							.setDescription("Lv."+level+"("+per+"%)\n다음 레벨까지 경험치\n"+unitExp(remaintonext)+"\n만렙까지 : "+Number((Math.ceil(remaintomax/1000000000000)-(Math.ceil(remaintomax/10000000000000000)-1)*10000)-1)+"조 "+(Math.ceil(remaintomax/100000000)-(Math.ceil((remaintomax/1000000000000)-1)*10000)-1)+"억");
 						msg.channel.send({ embeds: [embed1] });
 					}
-				});
+				}
+			}
+			catch(e)
+			{
+				const embed1 = new Discord.MessageEmbed()
+					.setTitle("["+nick+"]")
+					.setDescription("없는 캐릭터명 입니다.");
+				msg.channel.send({ embeds: [embed1] });
+			}
 		}
     };
 
