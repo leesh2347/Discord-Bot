@@ -3,13 +3,13 @@ var cheerio = require('cheerio');
 const {fetch} = require('undici');
 
 async function isreboot(nick){
-	var l=await(await fetch("https://maple.gg/u/"+encodeURIComponent(nick))).text();
+	var l=await(await fetch("https://maplestory.nexon.com/Ranking/World/Total?c="+encodeURIComponent(nick))).text();
 	var $ = cheerio.load(l);
 	var isre=$("#container > div > div > div:nth-child(4)").text();
-	if(isre!="랭킹정보가 없습니다.")
-		return 1;
+	if(isre.includes("랭킹정보가 없습니다."))
+		return "o";
 	else
-		return 2;
+		return "x";
 }
 
 //run이라는 메소드(function)을 export(수출)
@@ -20,7 +20,7 @@ exports.run = async (client, msg, args) => {
 			var url = "https://maplestory.nexon.com/Ranking/World/Total?c="+encodeURIComponent(nick);
 			try{
 				var isr=await isreboot(nick);
-				if(isr==1)
+				if(isr=="x")
 				{
 					var l=await(await fetch(url)).text();
 					var $ = cheerio.load(l);
@@ -51,7 +51,8 @@ exports.run = async (client, msg, args) => {
 				}
 				else
 				{
-					var l=await(await fetch(url+"&w=254")).text();
+					var urlre = "https://maplestory.nexon.com/Ranking/World/Total?c="+encodeURIComponent(nick)+"&w=254";
+					var l=await(await fetch(urlre)).text();
 					var $ = cheerio.load(l);
 					var img = $("#container > div > div > div:nth-child(4) > div.rank_table_wrap > table > tbody > tr.search_com_chk > td.left > span").find("img").attr("src");
 					var im=new Discord.MessageAttachment(img,"character.png");
